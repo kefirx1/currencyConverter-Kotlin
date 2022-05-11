@@ -1,8 +1,5 @@
 package pl.dev.qcta_2_blazejkwiatkowski.apiData
 
-import java.util.*
-import kotlin.collections.ArrayList
-
 data class FixerAPIDateConvertedData(
     val base: String,
     val date: String,

@@ -14,8 +14,8 @@ class Repository {
 
     fun getRatesOnTheDate(dateString: String): Single<FixerAPIDateData> {
 
-        //TODO
-        return service.getFakeDateResponse()
+        Log.e("TAG", dateString)
+        return service.getDateResponse(date = dateString)
 
     }
 

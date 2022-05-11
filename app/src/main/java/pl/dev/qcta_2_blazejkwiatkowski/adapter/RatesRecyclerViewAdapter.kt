@@ -1,7 +1,6 @@
 package pl.dev.qcta_2_blazejkwiatkowski.adapter
 
 import android.icu.text.SimpleDateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ class RatesRecyclerViewAdapter: RecyclerView.Adapter<RatesRecyclerViewAdapter.Ra
     lateinit var fixerAPIDateConvertedData: FixerAPIDateConvertedData
     var list: ArrayList<Float> = ArrayList()
     var currencyList: ArrayList<String> = ArrayList()
+    var rowWithDate: ArrayList<Int> = arrayListOf(0)
 
     inner class RatesViewHolder(view: View): RecyclerView.ViewHolder(view){
         val dateTextView: TextView = view.findViewById(R.id.dateTextView)
@@ -38,7 +38,6 @@ class RatesRecyclerViewAdapter: RecyclerView.Adapter<RatesRecyclerViewAdapter.Ra
     }
 
     override fun getItemCount(): Int {
-//        TODO
         return list.size
     }
 
@@ -46,16 +45,14 @@ class RatesRecyclerViewAdapter: RecyclerView.Adapter<RatesRecyclerViewAdapter.Ra
     private fun setRowDetails(holder: RatesViewHolder, position: Int){
 
 
-        if(position == list.size-168){
+        if(rowWithDate.contains(position)){
             holder.dateTextView.text = convertTimestampToStringDate(fixerAPIDateConvertedData.timestamp)
-            Log.e("TAG", position.toString())
         }else{
             holder.dateTextView.text = ""
         }
 
         holder.currencyTextView.text = currencyList.elementAt(position)
         holder.rateTextView.text = list[position].toBigDecimal().toPlainString()
-
 
     }
 

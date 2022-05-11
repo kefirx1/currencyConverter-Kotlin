@@ -21,9 +21,15 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         get() = dataFromAPI
     private var repository: Repository = Repository()
 
-    fun getRatesOnTheDate(dateString: String){
+    fun getRatesOnTheDateRx(dateString: String){
         repository.getRatesOnTheDate(dateString = dateString)
             .subscribeOn(Schedulers.io())
+            .subscribe { it ->
+
+                Log.e("TAG", it.date)
+
+                dataFromAPI.postValue(convertToFixerAPIDateConvertedData(it))
+            }
     }
 
 
@@ -47,8 +53,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val listOfCurrency: Set<String> = hashMapOfRates.keys
         val listOfRates: List<Float> = hashMapOfRates.values.toList()
 
-        Log.e("TAG", listOfCurrency.toString())
-        Log.e("TAG", listOfRates.toString())
 
         return FixerAPIDateConvertedData(
             base = fixerAPIDateData.base,

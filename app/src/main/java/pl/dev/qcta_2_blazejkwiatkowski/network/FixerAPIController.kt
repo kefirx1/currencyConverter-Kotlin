@@ -9,8 +9,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class FixerAPIController {
 
-    private val API_KEY = "5UEVByj8QaXTckdq4vE7WN2z8h9jA1IH"
     private val BASE_URL = "https://mocki.io"
+//    private val BASE_URL = "https://api.apilayer.com"
 
     private fun getHttpLoggerInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
