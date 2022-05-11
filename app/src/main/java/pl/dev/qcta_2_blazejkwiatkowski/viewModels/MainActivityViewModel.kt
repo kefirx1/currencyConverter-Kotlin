@@ -31,6 +31,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         repository.getFakeRatesOnTheDate()
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
+
                 dataFromAPI.postValue(convertToFixerAPIDateConvertedData(it))
             }
     }
@@ -43,11 +44,18 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private fun convertToFixerAPIDateConvertedData(fixerAPIDateData: FixerAPIDateData): FixerAPIDateConvertedData {
         val hashMapOfRates = fixerAPIDateData.rates.asMap()
 
+        val listOfCurrency: Set<String> = hashMapOfRates.keys
+        val listOfRates: List<Float> = hashMapOfRates.values.toList()
+
+        Log.e("TAG", listOfCurrency.toString())
+        Log.e("TAG", listOfRates.toString())
+
         return FixerAPIDateConvertedData(
             base = fixerAPIDateData.base,
             date = fixerAPIDateData.date,
             historical = fixerAPIDateData.historical,
-            rates = hashMapOfRates,
+            currency = listOfCurrency,
+            rates = listOfRates,
             success = fixerAPIDateData.success,
             timestamp = fixerAPIDateData.timestamp
         )

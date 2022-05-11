@@ -1,5 +1,6 @@
 package pl.dev.qcta_2_blazejkwiatkowski.adapter
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +9,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pl.dev.qcta_2_blazejkwiatkowski.R
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateConvertedData
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RatesRecyclerViewAdapter: RecyclerView.Adapter<RatesRecyclerViewAdapter.RatesViewHolder>(){
-    var fixerAPIDateConvertedData: FixerAPIDateConvertedData? = null
-    var currencyNamesSet: Set<String>? = null
+
+    lateinit var fixerAPIDateConvertedData: FixerAPIDateConvertedData
+    var list: ArrayList<Float> = ArrayList()
+    var currencyList: ArrayList<String> = ArrayList()
 
     inner class RatesViewHolder(view: View): RecyclerView.ViewHolder(view){
-
+        val dateTextView: TextView = view.findViewById(R.id.dateTextView)
         val currencyTextView: TextView = view.findViewById(R.id.currencyTextView)
         val rateTextView: TextView = view.findViewById(R.id.rateTextView)
     }
@@ -34,22 +39,31 @@ class RatesRecyclerViewAdapter: RecyclerView.Adapter<RatesRecyclerViewAdapter.Ra
 
     override fun getItemCount(): Int {
 //        TODO
-        return currencyNamesSet!!.size
+        return list.size
     }
+
 
     private fun setRowDetails(holder: RatesViewHolder, position: Int){
 
-        if(position == 167){
-            Log.e("TAG","CALL previous day")
-        }
 
-        if(currencyNamesSet != null && fixerAPIDateConvertedData != null){
-            holder.currencyTextView.text = currencyNamesSet!!.elementAt(position)
-            holder.rateTextView.text = fixerAPIDateConvertedData!!.rates[currencyNamesSet!!.elementAt(position)]!!.toBigDecimal().toPlainString()
+        if(position == list.size-168){
+            holder.dateTextView.text = convertTimestampToStringDate(fixerAPIDateConvertedData.timestamp)
+            Log.e("TAG", position.toString())
         }else{
-            Log.e("TAG", "NULL")
+            holder.dateTextView.text = ""
         }
 
+        holder.currencyTextView.text = currencyList.elementAt(position)
+        holder.rateTextView.text = list[position].toBigDecimal().toPlainString()
+
+
+    }
+
+    private fun convertTimestampToStringDate(timestamp: Int): String {
+        val date = Date((timestamp).toLong()*1000)
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+
+        return sdf.format(date)
     }
 
 }
