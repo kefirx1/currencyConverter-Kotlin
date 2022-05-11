@@ -28,7 +28,16 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        loadDataFromAPI()
+        if (DeviceInfo.checkInternetConnection(applicationContext)) {
+            loadDataFromAPI()
+        } else {
+            Toast.makeText(
+                this,
+                "Brak połączenia z internetem",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
     }
 
     private fun initRecyclerView() {
@@ -37,17 +46,24 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
-        binding.scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        binding.scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
 
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                count++
-                binding.progressBar.visibility = View.VISIBLE
-
                 if (count < 20) {
-                    ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.list.size)
-                    viewModel.getFakeRatesOnTheDateRx()
-                    dayCounter--
+                    count++
+                    binding.progressBar.visibility = View.VISIBLE
+                    if (DeviceInfo.checkInternetConnection(applicationContext)) {
+                        ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.list.size)
+                        viewModel.getFakeRatesOnTheDateRx()
+                        dayCounter--
 //                    viewModel.getRatesOnTheDateRx(getDataString(dayCounter))
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Brak połączenia z internetem",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
                     Toast.makeText(
                         this,

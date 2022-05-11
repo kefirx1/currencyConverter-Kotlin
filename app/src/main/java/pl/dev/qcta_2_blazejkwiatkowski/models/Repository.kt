@@ -4,9 +4,7 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Single
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateData
 import pl.dev.qcta_2_blazejkwiatkowski.network.FixerAPIController
-import javax.inject.Singleton
 
-@Singleton
 class Repository {
 
     private val fixerAPIController = FixerAPIController()
