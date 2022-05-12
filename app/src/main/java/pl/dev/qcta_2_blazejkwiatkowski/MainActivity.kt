@@ -15,8 +15,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    lateinit var ratesRecyclerViewAdapter: RatesRecyclerViewAdapter
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var ratesRecyclerViewAdapter: RatesRecyclerViewAdapter
     private lateinit var viewModel: MainActivityViewModel
 
     private var dayCounter = -1
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                     count++
                     binding.progressBar.visibility = View.VISIBLE
                     if (DeviceInfo.checkInternetConnection(applicationContext)) {
-                        ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.list.size)
+                        ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.valuesList.size)
                         viewModel.getFakeRatesOnTheDateRx()
                         dayCounter--
 //                    viewModel.getRatesOnTheDateRx(getDataString(dayCounter))
@@ -76,33 +76,33 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun loadDataFromAPI(){
+    private fun loadDataFromAPI() {
         viewModel = ViewModelProvider
             .AndroidViewModelFactory
             .getInstance(application)
             .create(MainActivityViewModel::class.java)
 
-        ratesRecyclerViewAdapter = RatesRecyclerViewAdapter()
+        ratesRecyclerViewAdapter = RatesRecyclerViewAdapter(instance = this)
 
         viewModel.dataFromAPIResult.observe(this) {
 
-            if(it!=null){
+            if (it != null) {
 
                 ratesRecyclerViewAdapter.fixerAPIDateConvertedData = it
 
-                it.currency.forEach{ currency ->
+                it.currency.forEach { currency ->
                     ratesRecyclerViewAdapter.currencyList.add(currency)
                 }
 
-                it.rates.forEach{ rate ->
-                    ratesRecyclerViewAdapter.list.add(rate)
+                it.rates.forEach { rate ->
+                    ratesRecyclerViewAdapter.valuesList.add(rate)
                 }
 
 
                 initRecyclerView()
                 binding.progressBar.visibility = View.INVISIBLE
 
-            }else{
+            } else {
                 Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
             }
 
@@ -118,15 +118,15 @@ class MainActivity : AppCompatActivity() {
         calendar.add(Calendar.DATE, dayValue)
 
         val dayInt = calendar.get(Calendar.DAY_OF_MONTH)
-        val monthInt = calendar.get(Calendar.MONTH)+1
+        val monthInt = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         var dayString = dayInt.toString()
         var monthString = monthInt.toString()
 
-        if(dayInt<10){
+        if (dayInt < 10) {
             dayString = "0$dayInt"
         }
-        if(monthInt<10){
+        if (monthInt < 10) {
             monthString = "0$monthInt"
         }
 

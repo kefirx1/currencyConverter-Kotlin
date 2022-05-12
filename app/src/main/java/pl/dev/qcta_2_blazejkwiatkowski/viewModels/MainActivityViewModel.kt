@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateConvertedData
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateData
