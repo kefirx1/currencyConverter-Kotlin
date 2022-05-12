@@ -1,7 +1,6 @@
 package pl.dev.qcta_2_blazejkwiatkowski.adapter
 
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,6 @@ import pl.dev.qcta_2_blazejkwiatkowski.ExchangeActivity
 import pl.dev.qcta_2_blazejkwiatkowski.MainActivity
 import pl.dev.qcta_2_blazejkwiatkowski.R
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateConvertedData
-import java.util.*
-import kotlin.collections.ArrayList
 
 class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter<RatesRecyclerViewAdapter.RatesViewHolder>(){
 
@@ -55,9 +52,8 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
     private fun setRowDetails(holder: RatesViewHolder, position: Int){
 
         if(rowWithDate.contains(position)){
-            holder.dateTextView.text = convertDate(dateList[position])
+            holder.dateTextView.text = dateList[position]
         }
-
         holder.currencyTextView.text = currencyList.elementAt(position)
         holder.valueTextView.text = valuesList[position].toBigDecimal().toPlainString()
 
@@ -66,12 +62,11 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
     private fun setListener(holder: RatesViewHolder, position: Int) {
 
         holder.rowRecyclerView.setOnClickListener{
-
             val intent = Intent(instance, ExchangeActivity::class.java).apply {
                 putExtra("currency", currencyList[position])
                 putExtra("value", valuesList[position].toBigDecimal().toPlainString())
                 putExtra("base", fixerAPIDateConvertedData.base)
-                putExtra("date", convertDate(dateList[position]))
+                putExtra("date", dateList[position])
             }
             instance.startActivity(intent)
 
@@ -79,12 +74,5 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
 
     }
 
-    private fun convertDate(dateString: String): String {
-
-        val year = dateString.substring(0,4)
-        val month = dateString.substring(5, 7)
-        val day = dateString.substring(8)
-        return "$day-$month-$year"
-    }
 
 }

@@ -1,10 +1,6 @@
 package pl.dev.qcta_2_blazejkwiatkowski.viewModels
 
-import androidx.annotation.MainThread
-import androidx.annotation.RestrictTo
 import com.google.common.truth.Truth.assertThat
-import io.reactivex.rxjava3.subscribers.TestSubscriber
-import okhttp3.internal.wait
 import org.junit.Test
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateData
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.Rates

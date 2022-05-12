@@ -7,9 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-class FixerAPIController {
+const val BASE_URL = "https://api.apilayer.com"
 
-    private val BASE_URL = "https://api.apilayer.com"
+class FixerAPIController {
 
     private fun getHttpLoggerInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
@@ -31,7 +31,6 @@ class FixerAPIController {
             .baseUrl(BASE_URL)
             .build()
     }
-
 
     fun getFixerService(): FixerAPI = getRetrofit().create(FixerAPI::class.java)
 

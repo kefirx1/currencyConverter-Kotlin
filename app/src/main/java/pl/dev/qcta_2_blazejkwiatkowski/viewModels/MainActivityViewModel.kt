@@ -13,7 +13,7 @@ import pl.dev.qcta_2_blazejkwiatkowski.models.Repository
 import kotlin.reflect.full.memberProperties
 
 
-class MainActivityViewModel() : ViewModel() {
+class MainActivityViewModel : ViewModel() {
 
     var errorMessage = ""
     private val dataFromAPI = MutableLiveData<FixerAPIDateConvertedData?>()
@@ -39,25 +39,30 @@ class MainActivityViewModel() : ViewModel() {
 
                 override fun onComplete() {
                 }
-
             })
     }
 
-    private fun Rates.asMap() : Map<String, Float> {
+    private fun Rates.asMap(): Map<String, Float> {
         val props = Rates::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]!!.get(this) as Float }
+    }
+
+    private fun convertDate(dateString: String): String {
+        val year = dateString.substring(0, 4)
+        val month = dateString.substring(5, 7)
+        val day = dateString.substring(8)
+        return "$day-$month-$year"
     }
 
     fun convertToFixerAPIDateConvertedData(fixerAPIDateData: FixerAPIDateData): FixerAPIDateConvertedData {
 
         val hashMapOfRates = fixerAPIDateData.rates.asMap()
-
         val listOfCurrency: Set<String> = hashMapOfRates.keys
         val listOfRates: List<Float> = hashMapOfRates.values.toList()
         val listOfDates: ArrayList<String> = ArrayList()
 
-        for(i in listOfCurrency.indices){
-            listOfDates.add(fixerAPIDateData.date)
+        for (i in listOfCurrency.indices) {
+            listOfDates.add(convertDate(fixerAPIDateData.date))
         }
 
         return FixerAPIDateConvertedData(

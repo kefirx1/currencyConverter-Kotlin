@@ -15,7 +15,9 @@
         android:theme="@style/Theme.QCTA_2_BlazejKwiatkowski">
         <activity
             android:name=".ExchangeActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            />
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

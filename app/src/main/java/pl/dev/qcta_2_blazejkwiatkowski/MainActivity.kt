@@ -19,8 +19,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ratesRecyclerViewAdapter: RatesRecyclerViewAdapter
     private lateinit var viewModel: MainActivityViewModel
 
-    private var dayCounter = 0
-    private var count = 0
+    private var previousDaysCounter = 0
+    private var loadCounter = 0
+    private val internetConnectionErrorMessage = "Brak połączenia z internetem"
+    private val apiConnectionErrorMessage = "Błąd połączenia z bazą danych"
+    private val tooMuchInfoErrorMessage = "Starasz się załadować za dużo danych!!"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         checkStatus()
     }
 
-    private fun checkStatus(){
+    private fun checkStatus() {
         if (DeviceInfo.checkInternetConnection(applicationContext)) {
 
             binding.constraintLayout.setOnClickListener(null)
@@ -41,12 +44,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                "Brak połączenia z internetem",
+                internetConnectionErrorMessage,
                 Toast.LENGTH_SHORT
             ).show()
-            val headerTextError =  "Kliknij aby odświeżyć"
+            val headerTextError = "Kliknij aby odświeżyć"
             binding.headerTextView.text = headerTextError
-            binding.constraintMain.setOnClickListener{
+            binding.constraintMain.setOnClickListener {
                 checkStatus()
             }
         }
@@ -61,24 +64,24 @@ class MainActivity : AppCompatActivity() {
         binding.scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
 
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                if (count < 20) {
-                    count++
+                if (loadCounter <= 20) {
+                    loadCounter++
                     binding.progressBar.visibility = View.VISIBLE
+                    ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.valuesList.size)
                     if (DeviceInfo.checkInternetConnection(applicationContext)) {
-                        ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.valuesList.size)
-                        dayCounter--
-                        viewModel.getRatesOnTheDateRx(getDataString(dayCounter))
+                        previousDaysCounter--
+                        viewModel.getRatesOnTheDateRx(getDataString(previousDaysCounter))
                     } else {
                         Toast.makeText(
                             this,
-                            "Brak połączenia z internetem",
+                            internetConnectionErrorMessage,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         this,
-                        "Starasz się załadować za dużo danych!!",
+                        tooMuchInfoErrorMessage,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -94,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
         ratesRecyclerViewAdapter = RatesRecyclerViewAdapter(instance = this)
 
-        viewModel.dataFromAPIResult.observe(this) { it ->
+        viewModel.dataFromAPIResult.observe(this) {
 
             if (it != null) {
 
@@ -108,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     ratesRecyclerViewAdapter.valuesList.add(rate)
                 }
 
-                it.dates.forEach{ date ->
+                it.dates.forEach { date ->
                     ratesRecyclerViewAdapter.dateList.add(date)
                 }
 
@@ -116,14 +119,15 @@ class MainActivity : AppCompatActivity() {
                 binding.progressBar.visibility = View.INVISIBLE
 
             } else {
-                Toast.makeText(this, "Błąd połączenia z bazą danych", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    apiConnectionErrorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
                 binding.headerTextView.text = viewModel.errorMessage
-
             }
-
         }
-
-        viewModel.getRatesOnTheDateRx(getDataString(dayValue = dayCounter))
+        viewModel.getRatesOnTheDateRx(getDataString(dayValue = previousDaysCounter))
     }
 
 
@@ -143,7 +147,6 @@ class MainActivity : AppCompatActivity() {
         if (monthInt < 10) {
             monthString = "0$monthInt"
         }
-
 
         return "$year-$monthString-$dayString"
     }

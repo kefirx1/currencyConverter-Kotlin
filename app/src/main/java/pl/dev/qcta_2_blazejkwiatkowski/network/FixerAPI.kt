@@ -7,7 +7,7 @@ import retrofit2.http.Path
 
 
 interface FixerAPI {
-    @GET("/fixer/{date}?apikey=8uMtXWHAMydPCG1yo8eUGvrGvT2aDDV1")
+    @GET("/fixer/{date}?apikey=5UEVByj8QaXTckdq4vE7WN2z8h9jA1IH")
     fun getDateResponse(
         @Path("date") date: String
     ): Observable<FixerAPIDateData>
