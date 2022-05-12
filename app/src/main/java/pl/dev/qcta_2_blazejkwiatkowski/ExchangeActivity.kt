@@ -1,17 +1,17 @@
 package pl.dev.qcta_2_blazejkwiatkowski
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import pl.dev.qcta_2_blazejkwiatkowski.databinding.ActivityExchangeBinding
 
 class ExchangeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityExchangeBinding
-    var currency = ""
-    var value = ""
-    var base = ""
-    var date = ""
+    private var currency = ""
+    private var value = ""
+    private var base = ""
+    private var date = ""
+    private var dateText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +23,12 @@ class ExchangeActivity : AppCompatActivity() {
         value = intent.getStringExtra("value")!!
         base = intent.getStringExtra("base")!!
         date = intent.getStringExtra("date")!!
+        dateText = "Wartość z dnia: $date"
 
-        val dateText = "Wartość z dnia: $date"
+        setDetails()
+    }
 
+    fun setDetails(){
         binding.baseTextView.text = base
         binding.currencySelectedTextView.text = currency
         binding.dateSelectedTextView.text = dateText
@@ -34,7 +37,6 @@ class ExchangeActivity : AppCompatActivity() {
         binding.backButtonImageView.setOnClickListener{
             this.finish()
         }
-
-
     }
+
 }
