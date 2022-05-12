@@ -16,7 +16,7 @@ import kotlin.reflect.full.memberProperties
 class MainActivityViewModel : ViewModel() {
 
     var errorMessage = ""
-    private val dataFromAPI = MutableLiveData<FixerAPIDateConvertedData?>()
+    private var dataFromAPI = MutableLiveData<FixerAPIDateConvertedData?>()
     val dataFromAPIResult: LiveData<FixerAPIDateConvertedData?>
         get() = dataFromAPI
     private var repository: Repository = Repository()
@@ -40,6 +40,10 @@ class MainActivityViewModel : ViewModel() {
                 override fun onComplete() {
                 }
             })
+    }
+
+    fun resetDataFromAPIMutableLiveData(){
+        dataFromAPI = MutableLiveData<FixerAPIDateConvertedData?>()
     }
 
     private fun Rates.asMap(): Map<String, Float> {

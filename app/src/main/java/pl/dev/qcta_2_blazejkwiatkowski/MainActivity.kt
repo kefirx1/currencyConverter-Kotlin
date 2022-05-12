@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
         checkStatus()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.resetDataFromAPIMutableLiveData()
+    }
+
     private fun checkStatus() {
         if (DeviceInfo.checkInternetConnection(applicationContext)) {
 
