@@ -12,7 +12,6 @@ import pl.dev.qcta_2_blazejkwiatkowski.databinding.ActivityMainBinding
 import pl.dev.qcta_2_blazejkwiatkowski.viewModels.MainActivityViewModel
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -25,10 +24,10 @@ class MainActivity : AppCompatActivity() {
     private val apiConnectionErrorMessage = "Błąd połączenia z bazą danych"
     private val tooMuchInfoErrorMessage = "Starasz się załadować za dużo danych!!"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
         checkStatus()
     }
