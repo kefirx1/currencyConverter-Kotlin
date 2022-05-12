@@ -1,10 +1,10 @@
 package pl.dev.qcta_2_blazejkwiatkowski.viewModels
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateConvertedData
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateData
@@ -13,32 +13,34 @@ import pl.dev.qcta_2_blazejkwiatkowski.models.Repository
 import kotlin.reflect.full.memberProperties
 
 
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+class MainActivityViewModel() : ViewModel() {
 
-    private val dataFromAPI = MutableLiveData<FixerAPIDateConvertedData>()
-    val dataFromAPIResult: LiveData<FixerAPIDateConvertedData>
+    var errorMessage = ""
+    private val dataFromAPI = MutableLiveData<FixerAPIDateConvertedData?>()
+    val dataFromAPIResult: LiveData<FixerAPIDateConvertedData?>
         get() = dataFromAPI
     private var repository: Repository = Repository()
 
-    fun getRatesOnTheDateRx(dateString: String){
+    fun getRatesOnTheDateRx(dateString: String) {
         repository.getRatesOnTheDate(dateString = dateString)
             .subscribeOn(Schedulers.io())
-            .subscribe { it ->
+            .subscribe(object : Observer<FixerAPIDateData> {
+                override fun onSubscribe(d: Disposable) {
+                }
 
-                Log.e("TAG", it.date)
+                override fun onNext(t: FixerAPIDateData) {
+                    dataFromAPI.postValue(convertToFixerAPIDateConvertedData(t))
+                }
 
-                dataFromAPI.postValue(convertToFixerAPIDateConvertedData(it))
-            }
-    }
+                override fun onError(e: Throwable) {
+                    dataFromAPI.postValue(null)
+                    errorMessage = "Spróbuj ponownie później"
+                }
 
+                override fun onComplete() {
+                }
 
-    fun getFakeRatesOnTheDateRx() {
-        repository.getFakeRatesOnTheDate()
-            .subscribeOn(Schedulers.io())
-            .subscribe { it ->
-
-                dataFromAPI.postValue(convertToFixerAPIDateConvertedData(it))
-            }
+            })
     }
 
     private fun Rates.asMap() : Map<String, Float> {
@@ -46,16 +48,21 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         return props.keys.associateWith { props[it]!!.get(this) as Float }
     }
 
-    private fun convertToFixerAPIDateConvertedData(fixerAPIDateData: FixerAPIDateData): FixerAPIDateConvertedData {
+    fun convertToFixerAPIDateConvertedData(fixerAPIDateData: FixerAPIDateData): FixerAPIDateConvertedData {
+
         val hashMapOfRates = fixerAPIDateData.rates.asMap()
 
         val listOfCurrency: Set<String> = hashMapOfRates.keys
         val listOfRates: List<Float> = hashMapOfRates.values.toList()
+        val listOfDates: ArrayList<String> = ArrayList()
 
+        for(i in listOfCurrency.indices){
+            listOfDates.add(fixerAPIDateData.date)
+        }
 
         return FixerAPIDateConvertedData(
             base = fixerAPIDateData.base,
-            date = fixerAPIDateData.date,
+            dates = listOfDates,
             historical = fixerAPIDateData.historical,
             currency = listOfCurrency,
             rates = listOfRates,

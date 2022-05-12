@@ -17,8 +17,8 @@
             android:name=".ExchangeActivity"
             android:exported="false" />
         <activity
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

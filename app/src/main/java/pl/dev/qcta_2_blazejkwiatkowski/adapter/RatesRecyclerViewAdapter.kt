@@ -13,6 +13,7 @@ import pl.dev.qcta_2_blazejkwiatkowski.MainActivity
 import pl.dev.qcta_2_blazejkwiatkowski.R
 import pl.dev.qcta_2_blazejkwiatkowski.apiData.FixerAPIDateConvertedData
 import java.util.*
+import kotlin.collections.ArrayList
 
 class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter<RatesRecyclerViewAdapter.RatesViewHolder>(){
 
@@ -20,6 +21,7 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
     var valuesList: ArrayList<Float> = ArrayList()
     var currencyList: ArrayList<String> = ArrayList()
     var rowWithDate: ArrayList<Int> = arrayListOf(0)
+    var dateList: ArrayList<String> = ArrayList()
 
     inner class RatesViewHolder(view: View): RecyclerView.ViewHolder(view){
         val rowRecyclerView: ConstraintLayout = view.findViewById(R.id.rowRecyclerView)
@@ -52,11 +54,8 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
 
     private fun setRowDetails(holder: RatesViewHolder, position: Int){
 
-
         if(rowWithDate.contains(position)){
-            holder.dateTextView.text = convertTimestampToStringDate(fixerAPIDateConvertedData.timestamp)
-        }else{
-            holder.dateTextView.text = ""
+            holder.dateTextView.text = convertDate(dateList[position])
         }
 
         holder.currencyTextView.text = currencyList.elementAt(position)
@@ -72,7 +71,7 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
                 putExtra("currency", currencyList[position])
                 putExtra("value", valuesList[position].toBigDecimal().toPlainString())
                 putExtra("base", fixerAPIDateConvertedData.base)
-                putExtra("date", convertTimestampToStringDate(fixerAPIDateConvertedData.timestamp))
+                putExtra("date", convertDate(dateList[position]))
             }
             instance.startActivity(intent)
 
@@ -80,11 +79,12 @@ class RatesRecyclerViewAdapter(val instance: MainActivity): RecyclerView.Adapter
 
     }
 
-    private fun convertTimestampToStringDate(timestamp: Int): String {
-        val date = Date((timestamp).toLong()*1000)
-        val sdf = SimpleDateFormat("dd-MM-yyyy")
+    private fun convertDate(dateString: String): String {
 
-        return sdf.format(date)
+        val year = dateString.substring(0,4)
+        val month = dateString.substring(5, 7)
+        val day = dateString.substring(8)
+        return "$day-$month-$year"
     }
 
 }

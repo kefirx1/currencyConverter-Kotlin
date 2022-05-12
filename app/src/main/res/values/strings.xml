@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">QCTA_2_BlazejKwiatkowski</string>
     <string name="header_text">EURO - PRZELICZNIK</string>
+    <string name="error_text">Wystąpił błąd z połączeniem z bazą danych. Skontaktuj się z działem obsługi klienta!</string>
 </resources>

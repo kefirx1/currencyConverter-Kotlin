@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ratesRecyclerViewAdapter: RatesRecyclerViewAdapter
     private lateinit var viewModel: MainActivityViewModel
 
-    private var dayCounter = -1
+    private var dayCounter = 0
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,8 +27,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
+        checkStatus()
+    }
 
+    private fun checkStatus(){
         if (DeviceInfo.checkInternetConnection(applicationContext)) {
+
+            binding.constraintLayout.setOnClickListener(null)
+            val headerText = "EURO - PRZELICZNIK"
+            binding.headerTextView.text = headerText
+
             loadDataFromAPI()
         } else {
             Toast.makeText(
@@ -36,8 +44,12 @@ class MainActivity : AppCompatActivity() {
                 "Brak połączenia z internetem",
                 Toast.LENGTH_SHORT
             ).show()
+            val headerTextError =  "Kliknij aby odświeżyć"
+            binding.headerTextView.text = headerTextError
+            binding.constraintMain.setOnClickListener{
+                checkStatus()
+            }
         }
-
     }
 
     private fun initRecyclerView() {
@@ -54,9 +66,8 @@ class MainActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                     if (DeviceInfo.checkInternetConnection(applicationContext)) {
                         ratesRecyclerViewAdapter.rowWithDate.add(ratesRecyclerViewAdapter.valuesList.size)
-                        viewModel.getFakeRatesOnTheDateRx()
                         dayCounter--
-//                    viewModel.getRatesOnTheDateRx(getDataString(dayCounter))
+                        viewModel.getRatesOnTheDateRx(getDataString(dayCounter))
                     } else {
                         Toast.makeText(
                             this,
@@ -77,14 +88,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadDataFromAPI() {
-        viewModel = ViewModelProvider
-            .AndroidViewModelFactory
-            .getInstance(application)
-            .create(MainActivityViewModel::class.java)
+
+        viewModel = ViewModelProvider(this)
+            .get(MainActivityViewModel::class.java)
 
         ratesRecyclerViewAdapter = RatesRecyclerViewAdapter(instance = this)
 
-        viewModel.dataFromAPIResult.observe(this) {
+        viewModel.dataFromAPIResult.observe(this) { it ->
 
             if (it != null) {
 
@@ -98,18 +108,22 @@ class MainActivity : AppCompatActivity() {
                     ratesRecyclerViewAdapter.valuesList.add(rate)
                 }
 
+                it.dates.forEach{ date ->
+                    ratesRecyclerViewAdapter.dateList.add(date)
+                }
 
                 initRecyclerView()
                 binding.progressBar.visibility = View.INVISIBLE
 
             } else {
-                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Błąd połączenia z bazą danych", Toast.LENGTH_SHORT).show()
+                binding.headerTextView.text = viewModel.errorMessage
+
             }
 
         }
 
-        viewModel.getFakeRatesOnTheDateRx()
-//        viewModel.getRatesOnTheDateRx(getDataString(dayValue = dayCounter))
+        viewModel.getRatesOnTheDateRx(getDataString(dayValue = dayCounter))
     }
 
 
